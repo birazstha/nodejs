@@ -1,0 +1,17 @@
+    
+    <%- include('./partials/header')  %>
+
+    <div class="blogs content">
+      <h2>All Blogs</h2>
+
+      <% if(blogs.length > 0) {%> 
+        <% blogs.forEach(blog=>{%>
+      <h3 class="title"><%= blog.title %></h3>
+      <p class="title"><%= blog.snippet %></p>
+      <% }) %> 
+      <% }else{ %>
+      <p>No data found.</p>
+      <%}%>
+    </div>
+
+    <%- include('./partials/footer')  %>
