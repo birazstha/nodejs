@@ -24,12 +24,13 @@ app.set("view engine", "ejs");
 
 //middleware & static files
 app.use(express.static("public"));
+app.use(express.urlencoded({ extended: true }));
 app.use(morgan("dev"));
 
 //mongoose and mongo sandbox routes
 app.get("/add-blog", (req, res) => {
   const blog = new Blog({
-    title: "new blog 2",
+    title: "new blog 3",
     snippet: "about my new blog",
     body: "more about my blog",
   });
@@ -44,10 +45,49 @@ app.get("/add-blog", (req, res) => {
     });
 });
 
-app.get("/all-blogs", (res, req) => {
+app.get("/all-blogs", (req, res) => {
   Blog.find()
     .then((result) => {
-      // res.send(result);
+      res.send(result);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+});
+
+//Storing Data
+app.post("/blogs", (req, res) => {
+  const blog = new Blog(req.body);
+  blog
+    .save()
+    .then((result) => {
+      res.redirect("/blogs");
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+});
+
+//Listing Data
+app.get("/blogs", (req, res) => {
+  Blog.find()
+    .sort({ createdAt: -1 })
+    .then((result) => {
+      res.render("index", { title: "All Blogs", blogs: result, path: req.path });
+    });
+});
+
+app.get("/blogs/create", (req, res) => {
+  res.render("create", { title: "Create", path: req.path });
+});
+
+//View
+app.get("/blogs/:id", (req, res) => {
+  const id = req.params.id;
+
+  Blog.findById(id)
+    .then((result) => {
+      res.render("details", { blog: result, title: "Blog Details", path: req.path });
     })
     .catch((err) => {
       console.log(err);
@@ -56,29 +96,12 @@ app.get("/all-blogs", (res, req) => {
 
 //routes
 app.get("/", (req, res) => {
-  const blogs = [
-    {
-      title: "Yoshi finds eggs",
-      snippet: "My name is Youshi",
-    },
-    {
-      title: "Mario finds princes",
-      snippet: "My name is Mario",
-    },
-    {
-      title: "How to find princess?",
-      snippet: "Ways to find princess.",
-    },
-  ];
-  res.render("index", { title: "Home", path: req.path, blogs });
+  res.redirect("/blogs");
+  res.render("index", { title: "Home", path: req.path });
 });
 
 app.get("/about", (req, res) => {
   res.render("about", { title: "About Us", path: req.path });
-});
-
-app.get("/blogs/create", (req, res) => {
-  res.render("create", { title: "Create", path: req.path });
 });
 
 //404

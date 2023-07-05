@@ -8,6 +8,9 @@
         <% blogs.forEach(blog=>{%>
       <h3 class="title"><%= blog.title %></h3>
       <p class="title"><%= blog.snippet %></p>
+      <a href="/blogs/<%=blog._id %>" class="btn btn-primary btn-sm">Edit</a>
+      <a href="/blogs/<%=blog._id %>" class="btn btn-warning btn-sm">View</a>
+      <a href="/blogs/<%=blog._id %>" class="btn btn-danger btn-sm">Delete</a>
       <% }) %> 
       <% }else{ %>
       <p>No data found.</p>
