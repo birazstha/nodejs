@@ -2,18 +2,24 @@ const express = require("express");
 const morgan = require("morgan");
 const mongoose = require("mongoose");
 const Blog = require("./models/blog");
+const PORT = 3000;
+const methodOverride = require("method-override");
 
 //express app
 const app = express();
+
+app.use(methodOverride("_method"));
 
 //connect to mongodb
 const dbURL = "mongodb+srv://biraj:dlTUbicw1dVSBukl@cluster0.p2r01ei.mongodb.net/note-tuts?retryWrites=true&w=majority";
 
 mongoose
   .connect(dbURL)
-  .then((result) => {
+  .then(() => {
     console.log("Connected to MongoDB");
-    app.listen(3000);
+    app.listen(PORT, () => {
+      console.log("Server is up and running at port:", PORT);
+    });
   })
   .catch((err) => {
     console.log("Error connecting to MongoDB:", err);
@@ -88,6 +94,20 @@ app.get("/blogs/:id", (req, res) => {
   Blog.findById(id)
     .then((result) => {
       res.render("details", { blog: result, title: "Blog Details", path: req.path });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+});
+
+//Delete
+app.delete("/blogs/:id", (req, res) => {
+  const id = req.params.id;
+
+  console.log("Inside the blogs delete router handler");
+  Blog.findByIdAndDelete(id)
+    .then((result) => {
+      res.json();
     })
     .catch((err) => {
       console.log(err);
